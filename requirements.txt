@@ -1,0 +1,30 @@
+# 웹 프레임워크
+fastapi>=0.115
+uvicorn[standard]>=0.30
+
+# 설정/검증
+pydantic>=2.7
+pydantic-settings>=2.3
+
+# DB (async + sync)
+sqlalchemy>=2.0
+aiomysql>=0.2.0   # 비동기 MySQL 드라이버 (순수 파이썬, Windows/py3.14 호환)
+pymysql>=1.1      # 동기(스크립트/테스트)
+
+# 캐시
+redis>=5.0
+
+# 스케줄러 (원본 ScheduledPool/Job 대체)
+apscheduler>=3.10
+
+# 비전: 이 빌드에는 OpenCV 이미지 처리가 없음(카메라가 점유 비트를 TCP로 보고).
+# 따라서 opencv-python/numpy 불필요. 향후 영상처리 추가 시에만 설치.
+# opencv-python>=4.9
+# numpy>=1.26
+
+# 유틸
+httpx>=0.27
+
+# 테스트 (운영 인프라 미접속: 인메모리 SQLite + fakeredis)
+aiosqlite>=0.20
+fakeredis>=2.20
