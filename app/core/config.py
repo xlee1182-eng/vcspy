@@ -6,56 +6,55 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from pathlib import Path
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# config.py 위치(app/core/) 기준으로 프로젝트 루트의 .env 를 절대경로로 지정
-_ENV_FILE = Path(__file__).parent.parent.parent / ".env"
-
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=_ENV_FILE, env_prefix="YGVCS_", extra="ignore")
+    model_config = SettingsConfigDict(env_file=".env", env_prefix="YGVCS_", extra="ignore")
 
-    # --- 웹 서버 ---
-    app_name: str
-    host: str
-    port: int
-    context_path: str
+    # --- 웹 서버 (원본: server.port 8188, context-path /ygvcs) ---
+    app_name: str = "yg-vcs"
+    host: str = "0.0.0.0"
+    port: int = 8188
+    context_path: str = "/ygvcs"
 
-    # --- MySQL ---
-    db_host: str
-    db_port: int
-    db_name: str
-    db_user: str
-    db_password: str
-    db_pool_size: int
-    db_pool_min: int
-    db_echo: bool
+    # --- MySQL (원본 datasource) ---
+    db_host: str = "localhost"
+    db_port: int = 3307
+    db_name: str = "yg_vcs_cloud"
+    db_user: str = "root"
+    db_password: str = "root"
+    db_pool_size: int = 10  # 원본 druid max-active
+    db_pool_min: int = 5
+    db_echo: bool = False
 
-    # --- Redis ---
-    redis_host: str
-    redis_port: int
-    redis_password: str
-    redis_db: int
-    redis_timeout: int
+    # --- Redis (원본 spring.redis, database index 2) ---
+    redis_host: str = "localhost"
+    redis_port: int = 6379
+    # redis_password: str | None = None
+    redis_password: str = "admin"
+    redis_db: int = 2
+    redis_timeout: int = 5
 
-    # --- TCP 통신 서버 ---
-    primary_server_enabled: bool
-    primary_server_port: int
-    communication_key: str
-    server_version: str
+    # --- TCP 통신 서버 (원본: serverPort, communicationKey) ---
+    primary_server_enabled: bool = True
+    primary_server_port: int = 9112
+    communication_key: str = "123456789"
+    server_version: str = "1.4.19"
 
-    cam_server_enabled: bool
-    cam_server_port: int
-    callbox_server_enabled: bool
-    callbox_server_port: int
-    ws_server_enabled: bool
-    ws_server_port: int
+    # 원본 빌드에서 MainProcessServer 는 primary 만 기동(cam/callBox/ws 는 정의만).
+    # 동일하게 기본 비활성. 필요 시 환경변수로 활성화.
+    cam_server_enabled: bool = False
+    cam_server_port: int = 9113
+    callbox_server_enabled: bool = False
+    callbox_server_port: int = 9114
+    ws_server_enabled: bool = False
+    ws_server_port: int = 9115
 
-    # --- 스케줄러 ---
-    scheduler_enabled: bool
+    # 스케줄러(RecordHeartJob 등)
+    scheduler_enabled: bool = True
 
     @property
     def db_url(self) -> str:
